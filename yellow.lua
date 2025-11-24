@@ -2,6 +2,7 @@
     KEYSER UI V6 - CORRECTED STRUCTURE
     Structure: Sidebar (Main) -> Topbar (Sub) -> Content
     Added: Keybind & Scale Config
+    VISUAL REFINEMENT: Updated to match the new design specification (Discord-like theme).
 ]]
 
 local UserInputService = game:GetService("UserInputService")
@@ -10,24 +11,25 @@ local RunService = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
 
--- [ THEME ] - COLORS ADJUSTED TO MATCH THE SECOND IMAGE
+-- [ THEME ] - COLORS AND FONTS UPDATED TO MATCH THE NEW IMAGES
 local Keyser = {
     Colors = {
-        Main        = Color3.fromRGB(22, 24, 29),    -- Darkest blue-gray background
-        Sidebar     = Color3.fromRGB(28, 30, 36),    -- Left panel, slightly lighter
-        Header      = Color3.fromRGB(32, 35, 42),    -- Section title background
-        Content     = Color3.fromRGB(32, 35, 42),    -- Section content background (same as header)
-        Divider     = Color3.fromRGB(44, 47, 56),    -- Line under section title
-        Element     = Color3.fromRGB(38, 41, 48),    -- Buttons, toggles, sliders
-        Stroke      = Color3.fromRGB(44, 47, 56),    -- Borders
-        Text        = Color3.fromRGB(225, 226, 228), -- Main text
-        TextDark    = Color3.fromRGB(118, 121, 130), -- Dimmed text
-        Accent      = Color3.fromRGB(57, 117, 199),   -- The blue for checked toggles
-        Hover       = Color3.fromRGB(44, 47, 56),    -- Hover/selected color
-        ValueBox    = Color3.fromRGB(22, 24, 29)     -- Slider value box background (same as Main)
+        Main        = Color3.fromRGB(30, 31, 36),    -- Main background (very dark gray)
+        Sidebar     = Color3.fromRGB(43, 45, 49),    -- Sidebar background
+        Header      = Color3.fromRGB(49, 51, 56),    -- Section header background
+        Content     = Color3.fromRGB(49, 51, 56),    -- Section content background
+        Divider     = Color3.fromRGB(54, 57, 63),    -- Line under section title (subtle)
+        Element     = Color3.fromRGB(54, 57, 63),    -- Unchecked toggles, slider rail
+        Stroke      = Color3.fromRGB(60, 62, 67),    -- Borders for input fields, etc.
+        Text        = Color3.fromRGB(255, 255, 255), -- Main white text
+        TextDark    = Color3.fromRGB(185, 187, 190), -- Dimmed text (discord.gg/keyser)
+        Accent      = Color3.fromRGB(88, 101, 242),  -- The vibrant blue/purple for highlights
+        Hover       = Color3.fromRGB(64, 68, 75),    -- Selected/hovered sidebar/topbar item
+        ValueBox    = Color3.fromRGB(30, 31, 36)     -- Slider value box background
     },
-    Font = Enum.Font.GothamMedium,
-    FontBold = Enum.Font.GothamBold
+    Font = Enum.Font.Gotham,
+    FontBold = Enum.Font.GothamBold,
+    FontBlack = Enum.Font.GothamBlack -- For the main title
 }
 
 -- [ UTILS ]
@@ -78,42 +80,34 @@ function Library:Window(Config)
         ClipsDescendants = true
     })
     Create("UICorner", {Parent = MainFrame, CornerRadius = UDim.new(0, 6)})
-    Create("UIStroke", {Parent = MainFrame, Color = Keyser.Colors.Stroke, Thickness = 1})
-
+    
     MakeDraggable(MainFrame, MainFrame)
 
-    -- Toggle Visibility
     UserInputService.InputBegan:Connect(function(input)
         if input.KeyCode == ToggleKey then
             Screen.Enabled = not Screen.Enabled
         end
     end)
 
-    -- [ LAYOUT STRUCTURE ]
-    -- Header Area (Top)
-    local Header = Create("Frame", {Parent = MainFrame, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 65), ZIndex = 2})
+    local Header = Create("Frame", {Parent = MainFrame, BackgroundColor3 = Keyser.Colors.Sidebar, Size = UDim2.new(1, 0, 0, 65), ZIndex = 2})
     
-    -- Sidebar Area (Left)
     local Sidebar = Create("Frame", {
         Parent = MainFrame, BackgroundColor3 = Keyser.Colors.Sidebar,
         Position = UDim2.new(0, 0, 0, 65), Size = UDim2.new(0, 200, 1, -65), BorderSizePixel = 0
     })
     
-    -- Logo (Top Left)
-    local LogoArea = Create("Frame", {Parent = Header, BackgroundTransparency = 1, Size = UDim2.new(0, 200, 1, 0)})
+    local LogoArea = Create("Frame", {Parent = Header, BackgroundTransparency = 1, Size = UDim2.new(0, 200, 1, 0), Position = UDim2.new(0,15,0,0) })
     Create("TextLabel", {
         Parent = LogoArea, BackgroundTransparency = 1, Position = UDim2.new(0, 0, 0, 14), Size = UDim2.new(1, 0, 0, 22),
-        Font = Enum.Font.GothamBlack, Text = WindowName, TextColor3 = Color3.fromRGB(110, 110, 120), TextSize = 22
+        Font = Keyser.FontBlack, Text = WindowName, TextColor3 = Keyser.Colors.Text, TextSize = 22, TextXAlignment = Enum.TextXAlignment.Left
     })
     Create("TextLabel", {
         Parent = LogoArea, BackgroundTransparency = 1, Position = UDim2.new(0, 0, 0, 36), Size = UDim2.new(1, 0, 0, 14),
-        Font = Keyser.Font, Text = "discord.gg/keyser", TextColor3 = Keyser.Colors.TextDark, TextSize = 11
+        Font = Keyser.Font, Text = "discord.gg/keyser", TextColor3 = Keyser.Colors.TextDark, TextSize = 11, TextXAlignment = Enum.TextXAlignment.Left
     })
 
-    -- Top Navigation Container (Top Right)
     local NavContainer = Create("Frame", {Parent = Header, BackgroundTransparency = 1, Position = UDim2.new(0, 200, 0, 0), Size = UDim2.new(1, -200, 1, 0)})
     
-    -- Sidebar List Container
     local SideContainer = Create("ScrollingFrame", {
         Parent = Sidebar, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 1, 0),
         ScrollBarThickness = 0, CanvasSize = UDim2.new(0,0,0,0)
@@ -121,21 +115,15 @@ function Library:Window(Config)
     Create("UIListLayout", {Parent = SideContainer, SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 4)})
     Create("UIPadding", {Parent = SideContainer, PaddingTop = UDim.new(0, 15), PaddingLeft = UDim.new(0, 15), PaddingRight = UDim.new(0, 15)})
 
-    -- Page Content Container (Center/Right)
     local PageContainer = Create("Frame", {
         Parent = MainFrame, BackgroundTransparency = 1,
-        Position = UDim2.new(0, 201, 0, 65), Size = UDim2.new(1, -201, 1, -65),
+        Position = UDim2.new(0, 200, 0, 65), Size = UDim2.new(1, -200, 1, -65),
         ClipsDescendants = true
     })
 
-    -- Separator Lines
-    Create("Frame", {Parent = MainFrame, BackgroundColor3 = Keyser.Colors.Stroke, Position = UDim2.new(0, 200, 0, 65), Size = UDim2.new(0, 1, 1, -65), BorderSizePixel = 0})
-
     local WinData = {ActiveSidebar = nil}
 
-    -- [ 1. TAB (SIDEBAR BUTTON) ]
     function WinData:Tab(Config)
-        -- Container para os botões do Topo associados a essa aba lateral
         local TopButtonsFrame = Create("Frame", {
             Parent = NavContainer, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 1, 0), Visible = false
         })
@@ -145,12 +133,18 @@ function Library:Window(Config)
             Padding = UDim.new(0, 20)
         })
 
-        -- Botão da Sidebar
         local SideBtn = Create("TextButton", {
-            Parent = SideContainer, BackgroundColor3 = Keyser.Colors.Hover, BackgroundTransparency = 1, -- CORRECTED: Using theme color
+            Parent = SideContainer, BackgroundColor3 = Keyser.Colors.Hover, BackgroundTransparency = 1,
             Size = UDim2.new(1, 0, 0, 38), Text = "", AutoButtonColor = false
         })
         Create("UICorner", {Parent = SideBtn, CornerRadius = UDim.new(0, 4)})
+
+        -- NEW: Indicator bar for active tab
+        local Indicator = Create("Frame", {
+            Parent = SideBtn, BackgroundColor3 = Keyser.Colors.Accent, Position = UDim2.new(0, -15, 0.2, 0),
+            Size = UDim2.new(0, 3, 0.6, 0), Visible = false, BorderSizePixel = 0
+        })
+        Create("UICorner", {Parent = Indicator, CornerRadius = UDim.new(1, 0)})
 
         local Icon = Create("ImageLabel", {
             Parent = SideBtn, BackgroundTransparency = 1, Position = UDim2.new(0, 12, 0.5, -9), Size = UDim2.new(0, 18, 0, 18),
@@ -158,38 +152,32 @@ function Library:Window(Config)
         })
         local Label = Create("TextLabel", {
             Parent = SideBtn, BackgroundTransparency = 1, Position = UDim2.new(0, 40, 0, 0), Size = UDim2.new(1, -40, 1, 0),
-            Font = Keyser.Font, Text = Config.Name, TextColor3 = Keyser.Colors.TextDark, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left
+            Font = Keyser.FontBold, Text = Config.Name, TextColor3 = Keyser.Colors.TextDark, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left
         })
 
-        local TabObj = {
-            TopTabs = {},
-            ActiveTop = nil
-        }
+        local TabObj = { TopTabs = {}, ActiveTop = nil }
 
-        -- Ativar aba da Sidebar
         local function ActivateSidebar()
             if WinData.ActiveSidebar == TabObj then return end
             
-            -- Resetar anterior
             if WinData.ActiveSidebar then
+                WinData.ActiveSidebar.Indicator.Visible = false
                 Tween(WinData.ActiveSidebar.Btn, {BackgroundTransparency = 1})
                 Tween(WinData.ActiveSidebar.Label, {TextColor3 = Keyser.Colors.TextDark})
                 Tween(WinData.ActiveSidebar.Icon, {ImageColor3 = Keyser.Colors.TextDark})
                 WinData.ActiveSidebar.TopButtonsFrame.Visible = false
-                -- Esconder página ativa da aba anterior
                 if WinData.ActiveSidebar.ActiveTop then
                     WinData.ActiveSidebar.ActiveTop.Page.Visible = false
                 end
             end
 
-            -- Ativar nova
             WinData.ActiveSidebar = TabObj
+            Indicator.Visible = true
             Tween(SideBtn, {BackgroundTransparency = 0})
             Tween(Label, {TextColor3 = Keyser.Colors.Text})
             Tween(Icon, {ImageColor3 = Keyser.Colors.Text})
             TopButtonsFrame.Visible = true
             
-            -- Mostrar página ativa da nova aba ou a primeira
             if TabObj.ActiveTop then
                 TabObj.ActiveTop.Activate()
             elseif #TabObj.TopTabs > 0 then
@@ -201,19 +189,18 @@ function Library:Window(Config)
         TabObj.Btn = SideBtn
         TabObj.Label = Label
         TabObj.Icon = Icon
+        TabObj.Indicator = Indicator
         TabObj.TopButtonsFrame = TopButtonsFrame
 
-        -- [ 2. PAGE (TOPBAR BUTTON) ]
         function TabObj:Page(Name)
             local TopBtn = Create("TextButton", {
-                Parent = TopButtonsFrame, BackgroundColor3 = Keyser.Colors.Hover, BackgroundTransparency = 1, -- CORRECTED: Using theme color
+                Parent = TopButtonsFrame, BackgroundColor3 = Keyser.Colors.Hover, BackgroundTransparency = 1,
                 Size = UDim2.new(0, 0, 0, 32), Font = Keyser.FontBold, Text = Name,
                 TextColor3 = Keyser.Colors.TextDark, TextSize = 13, AutomaticSize = Enum.AutomaticSize.X
             })
             Create("UICorner", {Parent = TopBtn, CornerRadius = UDim.new(0, 4)})
             Create("UIPadding", {Parent = TopBtn, PaddingLeft = UDim.new(0, 16), PaddingRight = UDim.new(0, 16)})
 
-            -- Página de Conteúdo
             local PageScroll = Create("ScrollingFrame", {
                 Parent = PageContainer, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 1, 0),
                 Visible = false, ScrollBarThickness = 2, ScrollBarImageColor3 = Keyser.Colors.Stroke,
@@ -226,7 +213,6 @@ function Library:Window(Config)
             local LList = Create("UIListLayout", {Parent = LeftCol, SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 15)})
             local RList = Create("UIListLayout", {Parent = RightCol, SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 15)})
 
-            -- Auto Resize
             local function UpdCanvas() PageScroll.CanvasSize = UDim2.new(0,0,0, math.max(LList.AbsoluteContentSize.Y, RList.AbsoluteContentSize.Y) + 40) end
             LList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(UpdCanvas)
             RList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(UpdCanvas)
@@ -246,68 +232,48 @@ function Library:Window(Config)
             TopBtn.MouseButton1Click:Connect(PageObj.Activate)
             PageObj.Btn = TopBtn
             PageObj.Page = PageScroll
-
             table.insert(TabObj.TopTabs, PageObj)
 
-            -- [ 3. SECTION (GROUPBOX) ]
             local SectionLib = {}
             function SectionLib:Section(SecConfig)
                 local Col = (SecConfig.Side == "Right" and RightCol) or LeftCol
                 
-                local Groupbox = Create("Frame", {
-                    Parent = Col, BackgroundTransparency = 1,
-                    Size = UDim2.new(1, 0, 0, 0), AutomaticSize = Enum.AutomaticSize.Y
-                })
-
-                local HeaderFrame = Create("Frame", {
-                    Parent = Groupbox, BackgroundColor3 = Keyser.Colors.Header,
-                    Size = UDim2.new(1, 0, 0, 40)
-                })
-                Create("UICorner", {Parent = HeaderFrame, CornerRadius = UDim.new(0, 5)})
-                Create("Frame", {Parent = HeaderFrame, BackgroundColor3 = Keyser.Colors.Header, Position = UDim2.new(0,0,1,-5), Size = UDim2.new(1,0,0,5), BorderSizePixel=0})
-
-                Create("TextLabel", {
-                    Parent = HeaderFrame, BackgroundTransparency = 1, Position = UDim2.new(0, 15, 0, 0), Size = UDim2.new(1, -15, 1, 0),
-                    Font = Keyser.FontBold, Text = SecConfig.Name, TextColor3 = Keyser.Colors.Text, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left
-                })
-
-                Create("Frame", {
-                    Parent = Groupbox, BackgroundColor3 = Keyser.Colors.Divider, BorderSizePixel = 0,
-                    Position = UDim2.new(0, 0, 0, 40), Size = UDim2.new(1, 0, 0, 1), ZIndex = 2
-                })
-
-                local ContentFrame = Create("Frame", {
-                    Parent = Groupbox, BackgroundColor3 = Keyser.Colors.Content,
-                    Position = UDim2.new(0, 0, 0, 41), Size = UDim2.new(1, 0, 0, 0), AutomaticSize = Enum.AutomaticSize.Y
-                })
+                local Groupbox = Create("Frame", { Parent = Col, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 0), AutomaticSize = Enum.AutomaticSize.Y })
+                local ContentFrame = Create("Frame", { Parent = Groupbox, BackgroundColor3 = Keyser.Colors.Content, Size = UDim2.new(1, 0, 0, 0), AutomaticSize = Enum.AutomaticSize.Y })
                 Create("UICorner", {Parent = ContentFrame, CornerRadius = UDim.new(0, 5)})
-                Create("Frame", {Parent = ContentFrame, BackgroundColor3 = Keyser.Colors.Content, Size = UDim2.new(1,0,0,5), BorderSizePixel=0})
-
-                local ItemHolder = Create("UIListLayout", {Parent = ContentFrame, SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 8)})
-                Create("UIPadding", {Parent = ContentFrame, PaddingTop = UDim.new(0, 15), PaddingLeft = UDim.new(0, 15), PaddingRight = UDim.new(0, 15), PaddingBottom = UDim.new(0, 15)})
+                Create("UIListLayout", {Parent = ContentFrame, SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 0)})
+                
+                -- Section Header
+                local HeaderFrame = Create("Frame", { Parent = ContentFrame, BackgroundTransparency = 1, Size = UDim2.new(1,0,0,40) })
+                Create("TextLabel", { Parent = HeaderFrame, BackgroundTransparency = 1, Position = UDim2.new(0, 15, 0, 0), Size = UDim2.new(1, -15, 1, 0), Font = Keyser.FontBlack, Text = SecConfig.Name, TextColor3 = Keyser.Colors.Text, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left })
+                Create("Frame", { Parent = HeaderFrame, BackgroundColor3 = Keyser.Colors.Divider, BorderSizePixel = 0, Position = UDim2.new(0, 15, 1, 0), Size = UDim2.new(1, -30, 0, 1) })
 
                 local Elements = {}
+                local ItemContainer = Create("Frame", { Parent = ContentFrame, BackgroundTransparency = 1, Size = UDim2.new(1,0,0,0), AutomaticSize = Enum.AutomaticSize.Y })
+                Create("UIListLayout", {Parent = ItemContainer, SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 8)})
+                Create("UIPadding", {Parent = ItemContainer, PaddingTop = UDim.new(0, 5), PaddingLeft = UDim.new(0, 15), PaddingRight = UDim.new(0, 15), PaddingBottom = UDim.new(0, 15)})
 
                 function Elements:Toggle(Cfg)
-                    local Frame = Create("Frame", {Parent = ContentFrame, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 30)})
+                    local Frame = Create("Frame", {Parent = ItemContainer, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 30)})
                     Create("TextLabel", {Parent = Frame, BackgroundTransparency = 1, Size = UDim2.new(0.8, 0, 1, 0), Font = Keyser.Font, Text = Cfg.Name, TextColor3 = Keyser.Colors.TextDark, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left})
-                    local CheckBg = Create("TextButton", {Parent = Frame, BackgroundColor3 = Keyser.Colors.Element, Position = UDim2.new(1, -22, 0.5, -11), Size = UDim2.new(0, 22, 0, 22), Text = "", AutoButtonColor = false}); Create("UICorner", {Parent = CheckBg, CornerRadius = UDim.new(0, 4)})
-                    local CheckIcon = Create("ImageLabel", {Parent = CheckBg, BackgroundTransparency = 1, Position = UDim2.new(0, 3, 0, 3), Size = UDim2.new(1, -6, 1, -6), Image = "rbxassetid://10709790644", ImageColor3 = Color3.new(1,1,1), ImageTransparency = 1}) -- CORRECTED: Checkmark is now white
+                    local CheckBg = Create("TextButton", {Parent = Frame, BackgroundTransparency = 1, Position = UDim2.new(1, -22, 0.5, -11), Size = UDim2.new(0, 22, 0, 22), Text = ""}); Create("UICorner", {Parent = CheckBg, CornerRadius = UDim.new(0, 4)})
+                    local Stroke = Create("UIStroke", {Parent = CheckBg, Color = Keyser.Colors.Element, Thickness = 2})
+                    local CheckIcon = Create("ImageLabel", {Parent = CheckBg, BackgroundTransparency = 1, Position = UDim2.new(0, 3, 0, 3), Size = UDim2.new(1, -6, 1, -6), Image = "rbxassetid://10709790644", ImageColor3 = Keyser.Colors.Accent, ImageTransparency = 1})
                     local Toggled = Cfg.Default or false
-                    local function Update() if Toggled then Tween(CheckBg, {BackgroundColor3 = Keyser.Colors.Accent}); Tween(CheckIcon, {ImageTransparency = 0}) else Tween(CheckBg, {BackgroundColor3 = Keyser.Colors.Element}); Tween(CheckIcon, {ImageTransparency = 1}) end; if Cfg.Callback then Cfg.Callback(Toggled) end end
+                    local function Update() if Toggled then Tween(Stroke, {Color = Keyser.Colors.Accent}); Tween(CheckIcon, {ImageTransparency = 0}) else Tween(Stroke, {Color = Keyser.Colors.Element}); Tween(CheckIcon, {ImageTransparency = 1}) end; if Cfg.Callback then Cfg.Callback(Toggled) end end
                     CheckBg.MouseButton1Click:Connect(function() Toggled = not Toggled; Update() end); Update()
                 end
 
                 function Elements:Slider(Cfg)
-                    local Frame = Create("Frame", {Parent = ContentFrame, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 50)})
+                    local Frame = Create("Frame", {Parent = ItemContainer, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 50)})
                     Create("TextLabel", {Parent = Frame, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 20), Font = Keyser.FontBold, Text = Cfg.Name, TextColor3 = Keyser.Colors.Text, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left})
-                    local ValBox = Create("Frame", {Parent = Frame, BackgroundColor3 = Keyser.Colors.ValueBox, Position = UDim2.new(1, -40, 0, 0), Size = UDim2.new(0, 40, 0, 20)}); Create("UICorner", {Parent = ValBox, CornerRadius = UDim.new(0, 3)})
+                    local ValBox = Create("Frame", {Parent = Frame, BackgroundColor3 = Keyser.Colors.ValueBox, Position = UDim2.new(1, -50, 0, 0), Size = UDim2.new(0, 50, 0, 20)}); Create("UICorner", {Parent = ValBox, CornerRadius = UDim.new(0, 3)})
                     local ValLabel = Create("TextLabel", {Parent = ValBox, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 1, 0), Font = Keyser.FontBold, Text = "0.00", TextColor3 = Keyser.Colors.TextDark, TextSize = 11})
-                    local Rail = Create("Frame", {Parent = Frame, BackgroundColor3 = Keyser.Colors.Element, Position = UDim2.new(0, 0, 0, 35), Size = UDim2.new(1, 0, 0, 4)}); Create("UICorner", {Parent = Rail, CornerRadius = UDim.new(1, 0)})
+                    local Rail = Create("Frame", {Parent = Frame, BackgroundColor3 = Keyser.Colors.Element, Position = UDim2.new(0, 0, 0, 35), Size = UDim2.new(1, 0, 0, 8)}); Create("UICorner", {Parent = Rail, CornerRadius = UDim.new(1, 0)})
                     local Fill = Create("Frame", {Parent = Rail, BackgroundColor3 = Keyser.Colors.TextDark, Size = UDim2.new(0, 0, 1, 0)}); Create("UICorner", {Parent = Fill, CornerRadius = UDim.new(1, 0)})
-                    local Trigger = Create("TextButton", {Parent = Frame, BackgroundTransparency = 1, Position = UDim2.new(0,0,0,25), Size = UDim2.new(1,0,0,25), Text = ""})
+                    local Trigger = Create("TextButton", {Parent = Rail, BackgroundTransparency = 1, Size = UDim2.new(1,0,1,0), Text = ""})
                     local Min, Max, Val = Cfg.Min or 0, Cfg.Max or 100, Cfg.Default or Min
-                    local function Set(v) Val = math.clamp(v, Min, Max); local P = (Val - Min) / (Max - Min); Tween(Fill, {Size = UDim2.new(P, 0, 1, 0)}); ValLabel.Text = string.format("%."..(Cfg.Decimals or 0).."f", Val); if Cfg.Callback then Cfg.Callback(Val) end end
+                    local function Set(v) Val = math.clamp(v, Min, Max); local P = (Val - Min) / (Max - Min); Tween(Fill, {Size = UDim2.new(P, 0, 1, 0)}); ValLabel.Text = string.format("%."..(Cfg.Decimals or 2).."f", Val); if Cfg.Callback then Cfg.Callback(Val) end end
                     local Dragging = false
                     Trigger.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then Dragging = true; local x = math.clamp((i.Position.X - Rail.AbsolutePosition.X)/Rail.AbsoluteSize.X,0,1); Set(Min + (Max-Min)*x) end end)
                     UserInputService.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then Dragging = false end end)
@@ -315,7 +281,7 @@ function Library:Window(Config)
                 end
 
                 function Elements:Input(Cfg)
-                    local Frame = Create("Frame", {Parent = ContentFrame, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 55)})
+                    local Frame = Create("Frame", {Parent = ItemContainer, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 55)})
                     Create("TextLabel", {Parent = Frame, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 20), Font = Keyser.FontBold, Text = Cfg.Name, TextColor3 = Keyser.Colors.Text, TextSize = 13, TextXAlignment = Enum.TextXAlignment.Left})
                     local InputContainer = Create("Frame", {Parent = Frame, BackgroundColor3 = Keyser.Colors.Main, Position = UDim2.new(0, 0, 0, 25), Size = UDim2.new(1, 0, 0, 30)}); Create("UICorner", {Parent = InputContainer, CornerRadius = UDim.new(0, 4)}); Create("UIStroke", {Parent = InputContainer, Color = Keyser.Colors.Stroke, Thickness = 1})
                     local Box = Create("TextBox", {Parent = InputContainer, BackgroundTransparency = 1, Position = UDim2.new(0, 10, 0, 0), Size = UDim2.new(1, -20, 1, 0), Font = Keyser.Font, Text = "", PlaceholderText = Cfg.Placeholder or "Search...", TextColor3 = Keyser.Colors.Text, PlaceholderColor3 = Keyser.Colors.TextDark, TextSize = 12, TextXAlignment = Enum.TextXAlignment.Left})
@@ -323,7 +289,7 @@ function Library:Window(Config)
                 end
 
                 function Elements:List(Cfg)
-                    local Frame = Create("Frame", {Parent = ContentFrame, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, Cfg.Height or 150)})
+                    local Frame = Create("Frame", {Parent = ItemContainer, BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, Cfg.Height or 150)})
                     local Scroll = Create("ScrollingFrame", {Parent = Frame, BackgroundColor3 = Keyser.Colors.Main, Size = UDim2.new(1, 0, 1, 0), ScrollBarThickness = 2, ScrollBarImageColor3 = Keyser.Colors.Stroke, CanvasSize = UDim2.new(0,0,0,0)}); Create("UICorner", {Parent = Scroll, CornerRadius = UDim.new(0, 4)}); Create("UIStroke", {Parent = Scroll, Color = Keyser.Colors.Stroke, Thickness = 1})
                     local ListLayout = Create("UIListLayout", {Parent = Scroll, SortOrder = Enum.SortOrder.LayoutOrder}); Create("UIPadding", {Parent = Scroll, PaddingLeft = UDim.new(0, 5)})
                     local Items = {}; local function Resize() Scroll.CanvasSize = UDim2.new(0,0,0, ListLayout.AbsoluteContentSize.Y) end; ListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(Resize)
@@ -336,23 +302,13 @@ function Library:Window(Config)
                 end
 
                 function Elements:Button(Cfg)
-                    local Btn = Create("TextButton", {Parent = ContentFrame, BackgroundColor3 = Keyser.Colors.Element, Size = UDim2.new(1, 0, 0, 32), Font = Keyser.Font, Text = Cfg.Name, TextColor3 = Keyser.Colors.TextDark, TextSize = 12, AutoButtonColor = false}); Create("UICorner", {Parent = Btn, CornerRadius = UDim.new(0, 4)})
+                    local Btn = Create("TextButton", {Parent = ItemContainer, BackgroundColor3 = Keyser.Colors.Element, Size = UDim2.new(1, 0, 0, 32), Font = Keyser.FontBold, Text = Cfg.Name, TextColor3 = Keyser.Colors.TextDark, TextSize = 12, AutoButtonColor = false}); Create("UICorner", {Parent = Btn, CornerRadius = UDim.new(0, 4)})
                     Btn.MouseEnter:Connect(function() Tween(Btn, {BackgroundColor3 = Keyser.Colors.Hover, TextColor3 = Keyser.Colors.Text}) end); Btn.MouseLeave:Connect(function() Tween(Btn, {BackgroundColor3 = Keyser.Colors.Element, TextColor3 = Keyser.Colors.TextDark}) end)
                     Btn.MouseButton1Click:Connect(function() if Cfg.Callback then Cfg.Callback() end end)
                 end
                 return Elements
             end
             return SectionLib
-        end
-        
-        if not WinData.ActiveSidebar then 
-            -- Ativar primeira sidebar automaticamente
-            task.delay(0.05, function() 
-                if #SideContainer:GetChildren() > 1 then 
-                    -- Simular clique no primeiro botão (index 2 por causa do layout/padding)
-                    -- Método direto: chamar a função interna ActivateSidebar se for o primeiro
-                end
-            end)
         end
         
         return TabObj
